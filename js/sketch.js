@@ -20,7 +20,6 @@ function setup() {
 
 function draw() {
     // background(51);
-    console.log(frameCount);
     if(countFrame >= 500) {
         resetSketch();
     }
