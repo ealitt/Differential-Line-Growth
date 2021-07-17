@@ -1,9 +1,9 @@
-let _maxForce = 20;
-let _maxSpeed = 1.5;
-let _start_radius = 200;
-let _num_nodes = 10;
-let _cohesionRate = 1.01;
-let _sepDist = 100;
+const _maxForce = 20;
+const _maxSpeed = 1.5;
+const _start_radius = 200;
+const _num_nodes = 10;
+const _cohesionRate = 1.01;
+const _sepDist = 100;
 
 let nodes = [];
 let color = 0;
@@ -20,12 +20,12 @@ function setup() {
 
 function draw() {
     // background(51);
-    if(countFrame >= 500) {
+    if (countFrame >= 500) {
         resetSketch();
     }
-    if(!pause){
+    if (!pause) {
         let index = 0;
-        for(let node of nodes) {
+        for (let node of nodes) {
             node.applyForces(nodes);
             node.checkDist(index, nodes);
             node.update();
@@ -33,7 +33,7 @@ function draw() {
             index++;
         }
         color++;
-        if(color >= 255) color = 0;
+        if (color >= 255) color = 0;
         drawSmooth(nodes, color);
     }
     countFrame++;
@@ -44,10 +44,10 @@ function resetSketch() {
     background(0);
     resetValues();
     let posX, posY;
-    let angleInc = 2*PI / _num_nodes;
-    for(let angle = 0; angle <= 2*PI; angle+=angleInc){
-        posX = width/2 + cos(angle) * _start_radius;
-        posY = height/2 + sin(angle) * _start_radius;
+    let angleInc = 2 * PI / _num_nodes;
+    for (let angle = 0; angle <= 2 * PI; angle += angleInc) {
+        posX = width / 2 + cos(angle) * _start_radius;
+        posY = height / 2 + sin(angle) * _start_radius;
         nodes.push(new Node(posX, posY));
     }
 }
@@ -61,11 +61,11 @@ function resetValues() {
 
 function keyPressed() {
     if (keyCode === 80) { // if 'p' is pressed
-      pause = !pause;
+        pause = !pause;
     } else if (keyCode === 82) { // if 'r' is pressed
         setup();
     }
-  }
+}
 
 function drawSmooth(nodes) {
     // strokeWeight(4);
@@ -76,21 +76,21 @@ function drawSmooth(nodes) {
     stroke(color, 255, 255, 30);
     beginShape();
     curveVertex(
-        nodes[0].position.x, 
+        nodes[0].position.x,
         nodes[0].position.y
     );
-    for(let i = 0; i < nodes.length; i++){
+    for (let i = 0; i < nodes.length; i++) {
         curveVertex(
-            nodes[i].position.x, 
+            nodes[i].position.x,
             nodes[i].position.y
         );
     }
     curveVertex(
-        nodes[0].position.x, 
+        nodes[0].position.x,
         nodes[0].position.y
     );
     curveVertex(
-        nodes[0].position.x, 
+        nodes[0].position.x,
         nodes[0].position.y
     );
     endShape();
@@ -100,7 +100,7 @@ class Node {
     constructor(posX, posY) {
         this.position = createVector(posX, posY);
         this.velocity = p5.Vector.random2D();
-        this.velocity.setMag(random(0,4));
+        this.velocity.setMag(random(0, 4));
         this.acceleration = createVector();
         this.maxForce = _maxForce;
         this.maxSpeed = _maxSpeed;
@@ -109,32 +109,32 @@ class Node {
     }
 
     checkDist(index, nodes) {
-        if(nodes.length < maxNodes){
-            if (index != 0 && index != nodes.length-1){
-                for (let i = -1; i <= 1; i+=4) {
+        if (nodes.length < maxNodes) {
+            if (index != 0 && index != nodes.length - 1) {
+                for (let i = -1; i <= 1; i += 4) {
                     let distance = dist(
                         this.position.x,
                         this.position.y,
-                        nodes[index+i].position.x,
-                        nodes[index+i].position.y
+                        nodes[index + i].position.x,
+                        nodes[index + i].position.y
                     );
                     if (distance > this.separationDist) {
-                        let posX = (this.position.x + nodes[index+i].position.x) / 2;
-                        let posY = (this.position.y + nodes[index+i].position.y) / 2;
+                        let posX = (this.position.x + nodes[index + i].position.x) / 2;
+                        let posY = (this.position.y + nodes[index + i].position.y) / 2;
                         let newNode = new Node(posX, posY);
-                        nodes.splice(index+i+1, 0, newNode);
+                        nodes.splice(index + i + 1, 0, newNode);
                     }
                 }
             } else if (index == 0) {
                 let distance = dist(
                     this.position.x,
                     this.position.y,
-                    nodes[nodes.length-1].position.x,
-                    nodes[nodes.length-1].position.y
+                    nodes[nodes.length - 1].position.x,
+                    nodes[nodes.length - 1].position.y
                 );
                 if (distance > this.separationDist) {
-                    let posX = (this.position.x + nodes[nodes.length-1].position.x) / 2;
-                    let posY = (this.position.y + nodes[nodes.length-1].position.y) / 2;
+                    let posX = (this.position.x + nodes[nodes.length - 1].position.x) / 2;
+                    let posY = (this.position.y + nodes[nodes.length - 1].position.y) / 2;
                     let newNode = new Node(posX, posY);
                     nodes.splice(nodes.length, 0, newNode);
                 }
@@ -162,7 +162,7 @@ class Node {
             }
         }
 
-        if(total > 0) {
+        if (total > 0) {
             steer.div(total); // avg based on nearby nodes
             steer.setMag(this.maxSpeed);
             steer.sub(this.velocity);
@@ -175,15 +175,15 @@ class Node {
     cohesion(nodes) {
         let sum = createVector();
         for (let index = 0; index < nodes.length; index++) {
-            if (index != 0 && index != nodes.length-1) 
+            if (index != 0 && index != nodes.length - 1)
                 sum.add(
-                    nodes[index-1].position
+                    nodes[index - 1].position
                 ).add(
-                    nodes[index+1].position
+                    nodes[index + 1].position
                 );
-            else if (index == 0) // edge case 
+            else if (index == 0) // edge case
                 sum.add(
-                    nodes[nodes.length-1].position
+                    nodes[nodes.length - 1].position
                 ).add(
                     nodes[1].position
                 );
@@ -191,7 +191,7 @@ class Node {
                 sum.add(
                     nodes[0].position
                 ).add(
-                    nodes[nodes.length-2].position
+                    nodes[nodes.length - 2].position
                 );
         }
 
@@ -223,9 +223,9 @@ class Node {
         strokeWeight(1);
         stroke(255, 255, 255, 100);
         if (index + 1 < nodes.length) {
-            line(this.position.x, this.position.y, nodes[index+1].position.x, nodes[index+1].position.y);
+            line(this.position.x, this.position.y, nodes[index + 1].position.x, nodes[index + 1].position.y);
         } else {
-            line(nodes[nodes.length-1].position.x, nodes[nodes.length-1].position.y, nodes[0].position.x, nodes[0].position.y);
+            line(nodes[nodes.length - 1].position.x, nodes[nodes.length - 1].position.y, nodes[0].position.x, nodes[0].position.y);
         }
     }
 }
